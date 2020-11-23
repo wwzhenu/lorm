@@ -12,6 +12,7 @@ type Aggregate struct {
 }
 
 type Builder struct {
+	*Model
 	*Grammar
 	connection string
 	Wheres []Where

@@ -1,10 +1,9 @@
 package lorm
 
 type Model struct {
-	*Builder
 	TableName string
-	primaryKey string
-	connection string
+	PrimaryKey string
+	Connection string
 }
 
 func (m *Model) SetTable(tableName string)  {
@@ -12,9 +11,16 @@ func (m *Model) SetTable(tableName string)  {
 }
 
 func (m *Model) SetPrimaryKey(primaryKey string)  {
-	m.primaryKey = primaryKey
+	m.PrimaryKey = primaryKey
 }
 
-func (m *Model) GetTable()  {
-	return
+func (m *Model) GetTable()string  {
+	return m.TableName
+}
+
+func (m *Model) Query() *Builder  {
+	return &Builder{
+		Model : m,
+		From: m.GetTable(),
+	}
 }
