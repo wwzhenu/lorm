@@ -38,15 +38,15 @@ var selectComponents =  []selectComponent{
 
 
 
-func (*Grammar)compileSelect(builder Builder)string  {
+func (*Grammar)compileSelect(builder *Builder)string  {
 	return strings.Join(compileComponents(builder)," ")
 }
 
-func compileComponents(builder Builder)[]string{
+func compileComponents(builder *Builder)[]string{
 	var sql []string
 	for _,v := range selectComponents{
 		k := v.varName
-		param := reflect.ValueOf(builder).FieldByName(k).String()
+		param := reflect.ValueOf(builder).Elem().FieldByName(k).String()
 		if param != "" {
 			method := v.method
 			params := []reflect.Value{reflect.ValueOf(builder),reflect.ValueOf(param)}
@@ -57,7 +57,7 @@ func compileComponents(builder Builder)[]string{
 	return sql
 }
 
-func compileAggregate(builder Builder, table string)string  {
+func compileAggregate(builder *Builder, table string)string  {
 	if builder.Columns != "" {
 		return ""
 	}
@@ -69,15 +69,15 @@ func compileAggregate(builder Builder, table string)string  {
 	return fmt.Sprintf(sel+"%s(%s) AS aggregate",builder.Aggregate.method,column)
 }
 
-func compileFrom(builder Builder, table string)string  {
+func compileFrom(builder *Builder, table string)string  {
 	return "FROM "+table
 }
 
-func compileWheres(builder Builder, table string)string  {
+func compileWheres(builder *Builder, table string)string  {
 	rs := "WHERE "
 	if len(builder.Wheres)>0 {
 		for _,v := range builder.Wheres{
-			tmp := v.column +" "+ v.operator +" '"+ v.value+"'"+" AND "
+			tmp := v.column +" "+ v.operator +" "+ v.value+""+" AND "
 			rs = rs+tmp
 		}
 		rs = strings.Trim(rs," AND ")
@@ -85,7 +85,7 @@ func compileWheres(builder Builder, table string)string  {
 	return rs
 }
 
-func compileColumns(builder Builder, table string)string  {
+func compileColumns(builder *Builder, table string)string  {
 	if builder.distinct && builder.Columns != "*" {
 		return "SELECT DISTINCT "+builder.Columns
 	}

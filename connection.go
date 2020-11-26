@@ -3,6 +3,7 @@ package lorm
 import (
 	"database/sql"
 	"github.com/go-sql-driver/mysql"
+	"log"
 )
 
 var DefaultConnection = "default"
@@ -11,6 +12,11 @@ func init()  {
 	for k,v := range dataBaseConfig{
 		dsn := v.FormatDSN()
 		connection,_ := sql.Open("mysql",dsn)
+		err := connection.Ping()
+		if err != nil {
+			log.Println("连接失败",dsn)
+			panic(err)
+		}
 		connections[k] = connection
 	}
 }
@@ -22,7 +28,7 @@ var (
 			Passwd:                  "Rk9jCQOVX8GXgrW3",
 			Net:                     "tcp",
 			Addr:                    "127.0.0.1:3308",
-			DBName:                  "class",
+			DBName:                  "base_info",
 			Params:                  nil,
 			Collation:               "",
 			Loc:                     nil,
@@ -34,7 +40,7 @@ var (
 			WriteTimeout:            0,
 			AllowAllFiles:           false,
 			AllowCleartextPasswords: false,
-			AllowNativePasswords:    false,
+			AllowNativePasswords:    true,
 			AllowOldPasswords:       false,
 			CheckConnLiveness:       false,
 			ClientFoundRows:         false,
@@ -48,7 +54,7 @@ var (
 	connections = map[string]*sql.DB{}
 )
 
-func getConnection(name string)*sql.DB  {
+func GetConnection(name string)*sql.DB  {
 	_,ok := connections[name]
 	if !ok {
 		name = DefaultConnection
