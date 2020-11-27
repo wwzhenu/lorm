@@ -39,8 +39,10 @@ func (builder *Builder) Get(columns string,dest interface{}) {
 	builder.Columns = columns
 	value := reflect.ValueOf(dest)
 	direct := reflect.Indirect(value)
-	//base := value.Type().Elem()
-	base := reflect.ValueOf(builder.RealModel).Type()
+	base := value.Elem().Type().Elem()//若dest为指针使用此
+	//base := value.Type().Elem()//若dest为非指针使用此
+	fmt.Println(base)
+	//base := reflect.ValueOf(builder.RealModel).Type()
 	sql := builder.ToSql()
 	fmt.Println(sql)
 	smt,err := GetConnection(builder.Model.Connection).Prepare(sql)
@@ -65,6 +67,7 @@ func (builder *Builder) Get(columns string,dest interface{}) {
 		fmt.Println(base)
 		vp := reflect.New(base)
 		fmt.Println(vp.Type())
+		//vv := reflect.Indirect(vp)
 		vv := reflect.Indirect(vp)
 		for i,v := range rsColumns{
 			fieldName := tagField[v]
@@ -77,8 +80,7 @@ func (builder *Builder) Get(columns string,dest interface{}) {
 		}
 
 		rs.Scan(data...)
-		fmt.Println(vv.FieldByName("Name"))
-		direct.Set(reflect.Append(direct, vp))
+		direct.Set(reflect.Append(direct, vv))
 		k++
 	}
 
