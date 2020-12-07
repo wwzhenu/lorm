@@ -3,6 +3,7 @@ package lorm
 import (
 	"fmt"
 	"reflect"
+	"strconv"
 	"strings"
 )
 
@@ -33,6 +34,10 @@ var selectComponents =  []selectComponent{
 	{
 	varName: "Wheres",
 	method:  reflect.ValueOf(compileWheres),
+	},
+	{
+		varName: "Limit",
+		method:  reflect.ValueOf(compileLimit),
 	},
 }
 
@@ -90,6 +95,10 @@ func compileColumns(builder *Builder, table string)string  {
 		return "SELECT DISTINCT "+builder.Columns
 	}
 	return "SELECT "+builder.Columns
+}
+
+func compileLimit(builder *Builder, table string)string  {
+	return "LIMIT "+ strconv.Itoa(builder.limit)
 }
 
 func UcFirst(str string)string  {

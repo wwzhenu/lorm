@@ -42,7 +42,7 @@ var (
 			AllowCleartextPasswords: false,
 			AllowNativePasswords:    true,
 			AllowOldPasswords:       false,
-			CheckConnLiveness:       false,
+			CheckConnLiveness:       true,
 			ClientFoundRows:         false,
 			ColumnsWithAlias:        false,
 			InterpolateParams:       false,
